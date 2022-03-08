@@ -30,6 +30,9 @@ app = Flask(__name__)
 
 @app.route("/")
 def welcome():
+
+    print("Learn about Hawaii's climate")
+
     """List all available api routes."""
     return (
         f"Available Routes:<br/>"
@@ -107,6 +110,16 @@ def tobs():
         tobs.append(tobs_dict)
 
     return jsonify(tobs)
+
+
+@app.route("/api/v1.0/<start>" and "/api/v1.0/<start>/<end>")
+def start():
+
+    print('Find out the temperature data between different dates')
+    
+    startdate = input('Enter a start date:')
+    enddate = input('Enter an end date - not required:')
+
 
 
 if __name__ == '__main__':
