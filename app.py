@@ -3,7 +3,7 @@ from unicodedata import name
 import sqlalchemy
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
-from sqlalchemy import create_engine, func
+from sqlalchemy import create_engine
 
 import numpy as np
 import pandas as pd
@@ -28,18 +28,18 @@ app = Flask(__name__)
 
 # Flask Routes
 
-@app.route("/")
+@app.route('/')
 def welcome():
-
-    print("Learn about Hawaii's climate")
+   
 
     """List all available api routes."""
     return (
+        "Welcome to the Hawaii Weather Project <br/><br/><br/>"
         f"Available Routes:<br/>"
-        f"/api/v1.0/precipitation"
-        f"/api/v1.0/stations"
-        f"/api/v1.0/tobs"
-        f"/api/v1.0/<start>" and "/api/v1.0/<start>/<end>"
+        f"/api/v1.0/precipitation<br/>"
+        f"/api/v1.0/stations<br/>"
+        f"/api/v1.0/tobs<br/>"
+      #  f"/api/v1.0/<start>" and "/api/v1.0/<start>/<end>"
     )
 
 
@@ -60,34 +60,33 @@ def precipitation():
 
     for date, prcp in year_of_data:
         prcp_dict = {}
-        prcp_dict[date] = eval(prcp)
-        date_prcp.append(prcp_dict)
+        prcp_dict[date] = prcp
+        date_prcp.update(prcp_dict)
 
-    return jsonify(date_prcp)
-
-
+    return jsonify(f"Here is a list of dates and precipitation measurements.",date_prcp)
+    
 
 @app.route("/api/v1.0/stations")
 def stations():
     # Create our session (link) from Python to the DB
     session = Session(engine)
 
-    stations = session.query(Station.id, Station.station, Station.name, Station.latitude,\
-        Station.longitude,Station.elevation)
+    stations = session.query( station.id,Station.station, Station.name, Station.latitude,\
+        Station.longitude,Station.elevation).all()
 
     session.close()
 
     station_dict = {}
 
-    for id, station, name, latitude, longitude, elevation in stations:
+    for  station, name, latitude, longitude, elevation in stations:
         stn_dict = {}
-        stn_dict["Station ID"] = id
+        stn_dict["ID"] = station
         stn_dict["Station"] = station
         stn_dict["Station Name"] = name
         stn_dict["Latitude"] = latitude
         stn_dict["Longitude"] = longitude
         stn_dict["Elevation"] = elevation
-        station_dict.append(stn_dict)
+        station_dict.update(stn_dict)
 
     return jsonify(station_dict)
 
@@ -102,23 +101,30 @@ def tobs():
 
     session.close()
 
-    tobs = {}
+    tobsy = {}
 
     for date, tobs in temp_year:
         tobs_dict = {}
-        tobs_dict[date] = eval(tobs)
-        tobs.append(tobs_dict)
+        tobs_dict[date] = tobs
+        tobsy.update(tobs_dict)
 
     return jsonify(tobs)
 
 
-@app.route("/api/v1.0/<start>" and "/api/v1.0/<start>/<end>")
-def start():
-
-    print('Find out the temperature data between different dates')
+# @app.route("/api/v1.0/<start>" 
+# 
+#     print('Find out the temperature data between different dates')
     
-    startdate = input('Enter a start date:')
-    enddate = input('Enter an end date - not required:')
+#     startdate = input('Enter a start date:')
+
+
+# "/api/v1.0/<start>/<end>")
+# def start():
+
+#     print('Find out the temperature data between different dates')
+    
+#     startdate = input('Enter a start date:')
+#     enddate = input('Enter an end date - not required:')
 
 
 
