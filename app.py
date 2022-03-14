@@ -38,6 +38,7 @@ def welcome():
         f"/api/v1.0/precipitation<br/>" f"Precipitation data for the last year of data.<br/><br/>"
         f"/api/v1.0/stations<br/>"f"List of weather stations.<br/><br/>"
         f"/api/v1.0/tobs<br/>" f"List of temperature observations for last year of data.<br/><br/>"
+        f"The two below don't quite work. Best I could get is for them to throw no errors and return an empty dictionary.<br/>"
         f"/api/v1.0/start<br/>" f"<t/>Enter a start date and it returns termerature stats.<br/><br/>"
         f"/api/v1.0/start/end<br/>"  f"Enter a start and end date and it returns terperature stats for betwen those dates.<br/>"
     )
@@ -110,7 +111,10 @@ def tobs():
     return jsonify(f"Here is the last year's data for station USC00519281.",tobsy)
 
 
+#the best that can be said for the below routes is that they don't generate errors
+
 @app.route("/api/v1.0/<start>")
+#In theory, a parameter would be passed. Not working and nothing I try helps.
 def startDateOnly(start):
 
     session = Session(engine)
@@ -119,15 +123,14 @@ def startDateOnly(start):
     
     session.close 
 
-    tstats = {}
-  
-    for column in temp_stats.__table__.columns:
-        tstats[column.name] = str(getattr(temp_stats, column.name))
+    for row in temp_stats: 
+        row_as_dict = dict(row)
 
-    return jsonify(tstats)
+    return jsonify(row_as_dict)
 
 
 @app.route("/api/v1.0/<start>/<end>")
+#In theory, a parameter would be passed. Not working and nothing I try helps.
 def startDateEndDate(start,end):
 
     session = Session(engine)
@@ -136,7 +139,10 @@ def startDateEndDate(start,end):
     
     session.close
    
-    return jsonify(temp_stats2)
+    for row in temp_stats2: 
+        row_as_dict2 = dict(row)
+
+    return jsonify(row_as_dict2)
 
 if __name__ == '__main__':
     app.run(debug=True)
